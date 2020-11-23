@@ -1,0 +1,55 @@
+{
+    "version": 1.0,
+    "url": "https://www.elastic.co/guide/en/ecs/current/index.html",
+    "ecs": {
+        "version": "1.x"
+    },
+    "fields": {
+        "@timestamp": {
+            "type": "datetime",
+            "required": true,
+            "index": 0,
+            "url": "https://www.elastic.co/guide/en/ecs/current/ecs-base.html"
+        },
+        "log.level": {
+            "type": "string",
+            "required": true,
+            "index": 1,
+            "url": "https://www.elastic.co/guide/en/ecs/current/ecs-log.html"
+        },
+        "message": {
+            "type": "string",
+            "required": true,
+            "index": 2,
+            "url": "https://www.elastic.co/guide/en/ecs/current/ecs-base.html"
+        },
+        "ecs.version": {
+            "type": "string",
+            "required": true,
+            "url": "https://www.elastic.co/guide/en/ecs/current/ecs-ecs.html"
+        },
+        "labels": {
+            "type": "object",
+            "required": false,
+            "url": "https://www.elastic.co/guide/en/ecs/current/ecs-base.html",
+            "sanitization": {
+                "key": {
+                    "replacements": [".", "*", "\\"],
+                    "substitute": "_"
+                }
+            }
+        },
+        "trace.id": {
+            "type": "string",
+            "required": false,
+            "url": "https://www.elastic.co/guide/en/ecs/current/ecs-tracing.html",
+            "comment": "When APM agents add this field to the context, ecs loggers should pick it up and add it to the log event."
+        },
+        "transaction.id": {
+            "type": "string",
+            "required": false,
+            "url": "https://www.elastic.co/guide/en/ecs/current/ecs-tracing.html",
+            "comment": "When APM agents add this field to the context, ecs loggers should pick it up and add it to the log event."
+        }
+    }
+}

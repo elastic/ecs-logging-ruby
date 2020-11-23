@@ -20,71 +20,14 @@
 require 'rack/test'
 require 'sinatra/base'
 
-module Rack
-  class BodyProxy
-    def initialize(body, &block)
-      @body = body
-      @block = block
-      @closed = false
-    end
-
-    def respond_to_missing?(name, include_all = false)
-      super || @body.respond_to?(name, include_all)
-    end
-
-    def method_missing(name, *args, &block)
-      @body.__send__(name, *args, &block)
-    end
-
-    def close
-      return if closed?
-
-      @closed = true
-
-      begin
-        @body.close if @body.respond_to?(:close)
-      ensure
-        @block.call
-      end
-    end
-
-    def closed?
-      @closed
-    end
-  end
-
-  class EcsLogger
-    def initialize(app, logger)
-      @app = app
-      @logger = logger
-    end
-
-    def call(env)
-      status, headers, body = @app.call(env)
-      body = BodyProxy.new(body) { log(env, status, headers) }
-      [status, headers, body]
-    end
-
-    private
-
-    def log(env, status, headers)
-      msg = {
-        '@timestamp': Time.now.utc.iso8601(3),
-        log: {
-          level: status >= 500 ? 'error' : 'info',
-          logger: 'Rack'
-        },
-        http: {
-        },
-        ecs: { version: '1.7.0' }
-      }
-      @logger.write(JSON.fast_generate(msg))
-    end
-  end
-end
+require 'rack/ecs_logger'
 
 class CaptureLogger
   def initialize
+    clear!
+  end
+
+  def clear!
     @messages = []
   end
 
@@ -115,22 +58,42 @@ module Rack
       end
     end
 
+    before :each do
+      TestLogger.clear!
+    end
+
     it 'logs GET requests' do
       resp = get '/'
 
       expect(TestLogger.messages.count).to be 1
 
-      log, = TestLogger.messages
-      json = JSON.parse(log)
+      json = JSON.parse(TestLogger.messages.last)
 
       expect(json).to match(
-        '@timestamp' => /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/,
-        'ecs' => { 'version' => '1.7.0' },
-        'http' => {},
-        'log' => { 'level' => 'info', 'logger' => 'Rack' }
+        '@timestamp' => /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
+        'log.level' => "info",
+        'message' => "GET /",
+        'ecs.version' => '1.4.0',
+        'http' => {
+          'request' => {
+            'method' => 'GET'
+          }
+        },
+        'url' => {
+          'domain' => 'example.org',
+          'path' => '/',
+          'port' => '80',
+          'scheme' => 'http'
+        }
       )
+    end
 
-      pp TestLogger.messages
+    it 'validates against schema' do
+      get '/'
+
+      schema = JSON.parse(::File.read('spec/fixtures/spec/spec.json'))
+      log_json = JSON.parse(TestLogger.messages.last)
+      expect { JSON::Validator.validate!(schema, log_json) }.to_not raise_error
     end
   end
 end
