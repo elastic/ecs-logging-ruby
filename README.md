@@ -67,7 +67,7 @@ Logs:
 ## Usage with Rack
 
 ```ruby
-use Rack::EcsLogger, Logger.new($stdout)
+use EcsLogging::Middleware, $stdout
 ```
 
 ## License

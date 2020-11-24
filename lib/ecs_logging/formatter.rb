@@ -17,7 +17,7 @@
 
 # frozen_string_literal: true
 
-module Ecs
+module EcsLogging
   class Formatter
     def call(severity, time, progname, msg, **extras)
       base = {

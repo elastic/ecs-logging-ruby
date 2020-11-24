@@ -18,9 +18,9 @@
 # frozen_string_literal: true
 
 require "logger"
-require "ecs/formatter"
+require "ecs_logging/formatter"
 
-module Ecs
+module EcsLogging
   class Logger < ::Logger
     def initialize(*args)
       super
@@ -31,7 +31,6 @@ module Ecs
       severity ||= UNKNOWN
 
       return true if @logdev.nil? or severity < level
-
       progname = @progname if progname.nil?
 
       if message.nil?

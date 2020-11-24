@@ -17,11 +17,11 @@
 
 # frozen_string_literal: true
 
-require_relative 'lib/ecs/logging/version'
+require_relative 'lib/ecs_logging/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "ecs-logging"
-  spec.version       = Ecs::Logging::VERSION
+  spec.version       = EcsLogging::VERSION
   spec.authors       = ["Mikkel Malmberg"]
   spec.email         = ["mikkel@elastic.co"]
 

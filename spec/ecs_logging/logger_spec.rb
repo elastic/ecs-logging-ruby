@@ -18,9 +18,9 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-require "ecs/logger"
+require "ecs_logging/logger"
 
-module Ecs
+module EcsLogging
   RSpec.describe Logger do
     let(:io) { StringIO.new }
     let(:log) { io.rewind; io.read }

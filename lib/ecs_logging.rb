@@ -17,9 +17,7 @@
 
 # frozen_string_literal: true
 
-require "ecs/logging/version"
+require "ecs_logging/version"
 
-module Ecs
-  module Logging
-  end
+module EcsLogging
 end
