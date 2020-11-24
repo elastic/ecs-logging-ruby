@@ -17,7 +17,7 @@
 
 # frozen_string_literal: true
 
-module Ecs
+module EcsLogging
   class BodyProxy
     def initialize(body, &block)
       @body = body

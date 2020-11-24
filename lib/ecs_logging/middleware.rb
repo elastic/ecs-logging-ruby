@@ -17,11 +17,14 @@
 
 # frozen_string_literal: true
 
-module Rack
-  class EcsLogger
-    def initialize(app, logger)
+require 'ecs_logging/logger'
+require 'ecs_logging/body_proxy'
+
+module EcsLogging
+  class Middleware
+    def initialize(app, logdev)
       @app = app
-      @logger = logger
+      @logger = Logger.new(logdev)
     end
 
     def call(env)
@@ -37,29 +40,23 @@ module Rack
       path = env['PATH_INFO']
       message = "#{req_method} #{path}"
 
-      line = {
-        '@timestamp': Time.now.utc.iso8601(3),
-        'log.level': status >= 500 ? 'error' : 'info',
-        'message': message,
-        'ecs.version': '1.4.0'
-      }
+      severity = status >= 500 ? Logger::ERROR : Logger::INFO
 
-      pp env
-
-      line[:http] = {
-        request: {
-          method: req_method
+      extras = {
+        http: {
+          request: {
+            method: req_method
+          }
+        },
+        url: {
+          domain: env['HTTP_HOST'],
+          path: path,
+          port: env['SERVER_PORT'],
+          scheme: env['HTTPS'] == 'on' ? 'https' : 'http'
         }
       }
 
-      line[:url] = {
-        domain: env['HTTP_HOST'],
-        path: path,
-        port: env['SERVER_PORT'],
-        scheme: env['HTTPS'] == 'on' ? 'https' : 'http'
-      }
-
-      @logger.write(JSON.fast_generate(line))
+      @logger.add(severity, message, **extras)
     end
   end
 end

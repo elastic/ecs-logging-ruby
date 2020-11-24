@@ -70,6 +70,28 @@ Logs:
 use EcsLogging::Middleware, $stdout
 ```
 
+Example output:
+
+```json
+{
+  "@timestamp":"2020-11-24T20:00:22.707Z",
+  "log.level":"INFO",
+  "message":"GET /",
+  "ecs.version":"1.4.0",
+  "http":{
+    "request":{
+      "method":"GET"
+    }
+  },
+  "url":{
+    "domain":"example.org",
+    "path":"/",
+    "port":"80",
+    "scheme":"http"
+  }
+}
+```
+
 ## License
 
 Apache 2.0
