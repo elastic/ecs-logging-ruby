@@ -17,12 +17,21 @@
 
 # frozen_string_literal: true
 
-RSpec.describe Ecs::Logging do
-  it "has a version number" do
-    expect(Ecs::Logging::VERSION).not_to be nil
-  end
+module Ecs
+  class Formatter
+    def call(severity, time, progname, msg, **extras)
+      base = {
+        "@timestamp": time.utc.iso8601(3),
+        "log.level": severity,
+        "message": msg,
+        "ecs.version": "1.4.0"
+      }
 
-  it "does something useful" do
-    expect(false).to eq(true)
+      base['process.title'] = progname if progname
+
+      base.merge!(extras) if extras
+
+      JSON.fast_generate(base) + "\n"
+    end
   end
 end

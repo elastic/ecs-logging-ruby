@@ -6,7 +6,7 @@ See [ecs-logging](https://github.com/elastic/ecs-logging) for other ECS logging 
 
 ---
 
-**Please note** that this library is in a **beta** version and backwards-incompatible changes might be introduced in future releases. While we strive to comply to [semver](https://semver.org/), we can not guarantee to avoid breaking changes in minor releases.
+**Please note** that this library is in a <del><strong>beta</strong></del> **in development** version and backwards-incompatible changes might be introduced in future releases. While we strive to comply to [semver](https://semver.org/), we can not guarantee to avoid breaking changes in minor releases.
 
 ## Installation
 
@@ -23,6 +23,46 @@ And then execute:
 Or install it yourself as:
 
     $ gem install ecs-logging
+
+## Usage
+
+`Ecs::Logger` is a subclass of Ruby's own [`Logger`](https://ruby-doc.org/stdlib/libdoc/logger/rdoc/Logger.html) and responds to the same methods.
+
+```ruby
+require 'ecs/logger'
+
+logger = Ecs::Logger.new($stdout)
+logger.info 'my informative message'
+logger.warn { 'be aware that…' }
+logger.error('a_progname') { 'oh no!' }
+```
+
+Logs the following JSON to `$stdout`:
+
+```ndjson
+ {"@timestamp":"2020-11-24T13:32:21.329Z","log.level":"INFO","message":"very informative","ecs.version":"1.4.0"}
+ {"@timestamp":"2020-11-24T13:32:21.330Z","log.level":"WARN","message":"be aware that…","ecs.version":"1.4.0"}
+ {"@timestamp":"2020-11-24T13:32:21.331Z","log.level":"ERROR","message":"oh no!","ecs.version":"1.4.0","process.title":"a_progname"}
+```
+
+Additionally, it allows for adding additional keys to messages, eg:
+
+```ruby
+logger.info 'ok', labels: { my_label: 'value' }, 'trace.id': 'abc-xyz'
+```
+
+Logs:
+
+```json
+{
+  "@timestamp":"2020-11-24T13:32:21.331Z",
+  "log.level":"ERROR",
+  "message":"oh no!",
+  "ecs.version":"1.4.0",
+  "labels":{"my_label":"value"},
+  "trace.id":"abc-xyz"
+}
+```
 
 ## Usage with Rack
 
