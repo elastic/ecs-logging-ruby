@@ -65,7 +65,7 @@ module EcsLogging
       )
     end
 
-    context "with a progname" do
+    describe "with progname" do
       subject { described_class.new(io, progname: "yes") }
 
       it "includes it" do
@@ -74,6 +74,26 @@ module EcsLogging
         json = JSON.parse(log)
 
         expect(json["log.logger"]).to eq "yes"
+      end
+    end
+
+    describe 'with_origin:' do
+      it 'includes origin fields' do
+        subject.info("very informative", with_origin: true)
+
+        json = JSON.parse(log)
+
+        expect(json).to match(
+          "@timestamp" => /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
+          "log.level" => "INFO",
+          "message" => "very informative",
+          "ecs.version" => "1.4.0",
+          "log.origin" => {
+            "file.line" => 82,
+            "file.name" => "logger_spec.rb",
+            "function" => "block (3 levels) in <module:EcsLogging>"
+          }
+        )
       end
     end
   end

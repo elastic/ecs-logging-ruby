@@ -27,7 +27,7 @@ module EcsLogging
       self.formatter = Formatter.new
     end
 
-    def add(severity, message = nil, progname = nil, **extras)
+    def add(severity, message = nil, progname = nil, with_origin: false, **extras)
       severity ||= UNKNOWN
 
       return true if @logdev.nil? or severity < level
@@ -55,31 +55,31 @@ module EcsLogging
       true
     end
 
-    def unknown(progname, **extras, &block)
-      add(UNKNOWN, nil, progname, **extras, &block)
-    end
+    %w[unknown fatal error warn info debug].each do |severity|
+      define_method(severity) do |progname, with_origin: false, **extras, &block|
+        if with_origin && origin = origin_from_caller(caller)
+          extras["log.origin"] = origin
+        end
 
-    def fatal(progname, **extras, &block)
-      add(FATAL, nil, progname, **extras, &block)
-    end
-
-    def error(progname, **extras, &block)
-      add(ERROR, nil, progname, **extras, &block)
-    end
-
-    def warn(progname, **extras, &block)
-      add(WARN, nil, progname, **extras, &block)
-    end
-
-    def info(progname, **extras, &block)
-      add(INFO, nil, progname, **extras, &block)
-    end
-
-    def debug(progname, **extras, &block)
-      add(DEBUG, nil, progname, **extras, &block)
+        add(self.class.const_get(severity.upcase), nil, progname, **extras, &block)
+      end
     end
 
     private
+
+    RUBY_FORMAT = /^(.+?):(\d+)(?::in `(.+?)')?$/.freeze
+
+    def origin_from_caller(stack)
+      return unless (ruby_match = stack.first.match(RUBY_FORMAT))
+
+      _, file, number, method = ruby_match.to_a
+
+      {
+        'file.name': File.basename(file),
+        'file.line': number.to_i,
+        function: method
+      }
+    end
 
     def format_message(severity, datetime, progname, msg, **extras)
       formatter.call(severity, datetime, progname, msg, **extras)
