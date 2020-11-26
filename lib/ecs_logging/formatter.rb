@@ -27,7 +27,7 @@ module EcsLogging
         "ecs.version": "1.4.0"
       }
 
-      base['process.title'] = progname if progname
+      base['log.logger'] = progname if progname
 
       base.merge!(extras) if extras
 
