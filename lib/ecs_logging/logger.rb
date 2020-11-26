@@ -58,10 +58,12 @@ module EcsLogging
     %w[unknown fatal error warn info debug].each do |severity|
       define_method(severity) do |progname, with_origin: false, **extras, &block|
         if with_origin && origin = origin_from_caller(caller)
-          extras["log.origin"] = origin
+          extras[:"log.origin"] = origin
         end
 
-        add(self.class.const_get(severity.upcase), nil, progname, **extras, &block)
+        name = severity.upcase.to_sym
+        cnst = self.class.const_get(name)
+        add(cnst, nil, progname.to_sym, **extras, &block)
       end
     end
 
