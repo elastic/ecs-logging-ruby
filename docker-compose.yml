@@ -1,0 +1,29 @@
+---
+version: '3.4'
+
+services:
+  specs:
+    build:
+      context: .
+      args:
+        BUNDLER_VERSION: '2.0.2'
+    image: '$IMAGE_NAME'
+    environment:
+      HOME: '/tmp'
+    entrypoint:
+      'docker/entrypoint.sh'
+    tty: true
+    volumes:
+      - .:/app:cached
+      - ./vendor:/vendor
+    tmpfs:
+      - /tmp:exec,mode=1777
+    user: ${USER_ID}
+
+  ruby_rspec:
+    image: apm-agent-ruby:${RUBY_VERSION}
+    user: ${USER_ID}
+
+volumes:
+  vendor:
+
