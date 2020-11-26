@@ -17,6 +17,9 @@
 
 # frozen_string_literal: true
 
+require 'time'
+require 'json'
+
 module EcsLogging
   class Formatter
     def call(severity, time, progname, msg, **extras)

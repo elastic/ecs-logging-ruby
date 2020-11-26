@@ -40,8 +40,19 @@ module EcsLogging
       )
     end
 
-    it 'adds extra keys' do
+    it "has methods for all severities" do
+      subject.unknown('ok', process: { id: 1 })
+      subject.fatal('ok', process: { id: 1 })
+      subject.error('ok', process: { id: 1 })
+      subject.warn('ok', process: { id: 1 })
       subject.info('ok', process: { id: 1 })
+      subject.debug('ok', process: { id: 1 })
+
+      expect(log.lines.count).to be 6
+    end
+
+    it "adds extra keys" do
+      subject.info("ok", process: { id: 1 })
 
       json = JSON.parse(log)
 
@@ -54,15 +65,15 @@ module EcsLogging
       )
     end
 
-    context 'with a progname' do
-      subject { described_class.new(io, progname: 'yes') }
+    context "with a progname" do
+      subject { described_class.new(io, progname: "yes") }
 
-      it 'includes it' do
-        subject.info('ok')
+      it "includes it" do
+        subject.info("ok")
 
         json = JSON.parse(log)
 
-        expect(json['process.title']).to eq 'yes'
+        expect(json["log.logger"]).to eq "yes"
       end
     end
   end
