@@ -27,7 +27,7 @@ module EcsLogging
       self.formatter = Formatter.new
     end
 
-    def add(severity, message = nil, progname = nil, with_origin: false, **extras)
+    def add(severity, message = nil, progname = nil, include_origin: false, **extras)
       severity ||= UNKNOWN
 
       return true if @logdev.nil? or severity < level
@@ -56,9 +56,9 @@ module EcsLogging
     end
 
     %w[unknown fatal error warn info debug].each do |severity|
-      define_method(severity) do |progname, with_origin: false, **extras, &block|
-        if with_origin && origin = origin_from_caller(caller)
-          extras[:"log.origin"] = origin
+      define_method(severity) do |progname, include_origin: false, **extras, &block|
+        if include_origin && origin = origin_from_caller(caller)
+          extras["log.origin"] = origin
         end
 
         name = severity.upcase.to_sym
