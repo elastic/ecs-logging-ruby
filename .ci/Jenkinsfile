@@ -65,10 +65,10 @@ pipeline {
                   sh("bin/dev -i${RUBY_VERSION} -f${FRAMEWORK}")
                 }
               }
-              post {
-                always {
-                  junit(allowEmptyResults: true, keepLongStdio: true, testResults: "**/spec/junit-reports/**/ruby-agent-junit.xml")
-                }
+            }
+            post {
+              always {
+                junit(allowEmptyResults: true, keepLongStdio: true, testResults: "${BASE_DIR}/spec/junit-reports/**/*-junit.xml")
               }
             }
           }
