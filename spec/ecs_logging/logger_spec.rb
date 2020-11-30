@@ -77,9 +77,9 @@ module EcsLogging
       end
     end
 
-    describe 'with_origin:' do
+    describe 'include_origin:' do
       it 'includes origin fields' do
-        subject.info("very informative", with_origin: true)
+        subject.info("very informative", include_origin: true)
 
         json = JSON.parse(log)
 

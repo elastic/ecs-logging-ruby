@@ -65,10 +65,10 @@ Logs:
 }
 ```
 
-To include info about where the log was called, call the methods with `with_origin: true`, like:
+To include info about where the log was called, call the methods with `include_origin: true`, like:
 
 ```ruby
-logger.warn('Hello!', with_origin: true)
+logger.warn('Hello!', include_origin: true)
 ```
 
 Resulting in
