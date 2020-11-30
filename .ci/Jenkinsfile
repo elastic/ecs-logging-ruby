@@ -11,6 +11,9 @@ pipeline {
     PIPELINE_LOG_LEVEL = 'INFO'
     NOTIFY_TO = credentials('notify-to')
     JOB_GCS_BUCKET = credentials('gcs-bucket')
+    VERSION = '2.7.2'
+    HOME = "${WORKSPACE}"
+    PATH = "${WORKSPACE}/.rbenv/bin:${WORKSPACE}/.rbenv/versions/${VERSION}/bin:${PATH}"
   }
   options {
     timeout(time: 2, unit: 'HOURS')
@@ -56,11 +59,10 @@ pipeline {
               withGithubNotify(context: "Tests-${RUBY_VERSION}-${FRAMEWORK}") {
                 deleteDir()
                 unstash 'source'
-                withEnv(["HOME=${env.WORKSPACE}", "PATH=${env.PATH}:${env.WORKSPACE}/bin"]) {
-                  dir("${BASE_DIR}"){
-                    dockerLogin(secret: "${DOCKER_SECRET}", registry: "${DOCKER_REGISTRY}")
-                    sh("bin/dev -i${RUBY_VERSION} -f${FRAMEWORK}")
-                  }
+                dir("${BASE_DIR}"){
+                  dockerLogin(secret: "${DOCKER_SECRET}", registry: "${DOCKER_REGISTRY}")
+                  sh(label: 'install rbenv', script: '.ci/install-rbenv.sh "${VERSION}"')
+                  sh("bin/dev -i${RUBY_VERSION} -f${FRAMEWORK}")
                 }
               }
               post {
