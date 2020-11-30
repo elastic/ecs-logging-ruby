@@ -6,6 +6,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    builder (3.2.4)
     diff-lcs (1.4.4)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
@@ -35,6 +36,9 @@ GEM
       rack-protection (= 2.1.0)
       tilt (~> 2.0)
     tilt (2.0.10)
+    yarjuf (2.0.0)
+      builder
+      rspec (~> 3)
 
 PLATFORMS
   ruby
@@ -45,6 +49,7 @@ DEPENDENCIES
   rake
   rspec
   sinatra
+  yarjuf
 
 BUNDLED WITH
    2.1.4

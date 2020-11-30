@@ -10,3 +10,6 @@
 # rspec failure tracking
 .rspec_status
 /vendor
+
+# junit reports folder
+spec/junit-reports

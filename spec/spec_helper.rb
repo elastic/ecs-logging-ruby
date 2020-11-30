@@ -22,6 +22,7 @@ require "bundler/setup"
 Bundler.require :default, :test
 
 require "ecs_logging"
+require 'yarjuf'
 
 RSpec.configure do |config|
   config.example_status_persistence_file_path = ".rspec_status"
