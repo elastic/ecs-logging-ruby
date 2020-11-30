@@ -1,0 +1,49 @@
+ifdef::env-github[]
+NOTE: Release notes are best read in our documentation at
+https://www.elastic.co/guide/en/apm/agent/ruby/current/release-notes.html[elastic.co]
+endif::[]
+
+////
+[[release-notes-x.x.x]]
+==== x.x.x (YYYY-MM-DD)
+
+[float]
+===== Breaking changes
+- Breaking change
+
+[float]
+===== Deprecated
+- Deprecation {pull}2526[#2526]
+
+[float]
+===== Added
+- Feature {pull}2526[#2526]
+
+[float]
+===== Changed
+- Change {pull}2526[#2526]
+
+[float]
+===== Fixed
+- Fix {pull}2526[#2526]
+
+[float]
+[[unreleased]]
+==== Unreleased
+////
+
+[[release-notes-0.x]]
+=== ECS logging Ruby 0.x
+
+[float]
+[[unreleased]]
+==== Unreleased
+
+===== Added
+
+- Use `include_origin` to attach stack traces to logs {pull}1[#1]
+
+[[release-notes-0.1.0]]
+==== 0.1.0 (2020-11-25)
+
+Initial release
