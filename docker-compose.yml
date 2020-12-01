@@ -18,11 +18,11 @@ services:
       - ./vendor:/vendor
     tmpfs:
       - /tmp:exec,mode=1777
-    user: ${USER_ID_GROUP}
+    user: ${USER_ID}
 
   ruby_rspec:
     image: apm-agent-ruby:${RUBY_VERSION}
-    user: ${USER_ID_GROUP}
+    user: ${USER_ID}
 
 volumes:
   vendor:
