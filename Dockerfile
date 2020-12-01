@@ -25,8 +25,7 @@ ENV FRAMEWORKS $FRAMEWORKS
 ENV RUBY_IMAGE $RUBY_IMAGE
 
 RUN mkdir -p $VENDOR_PATH \
-      && chown -R $USER_ID_GROUP $VENDOR_PATH
-RUN ls -ltrah $VENDOR_PATH
+      && chown -R $USER_ID_GROUP /vendor
 USER $USER_ID_GROUP
 
 # Upgrade RubyGems and install required Bundler version
