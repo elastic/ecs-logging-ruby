@@ -20,10 +20,8 @@ runRspec(){
 }
 
 # For debugging purposes
-ls -ltra ${GEM_HOME}
-find ${GEM_HOME} -type f -ls
-whoami
-groups
+ls -ltra /vendor || true
+find /vendor -type f -ls || true
 
 
 bundle check || (rm Gemfile.lock && bundle)
