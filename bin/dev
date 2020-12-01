@@ -48,8 +48,8 @@ unless options[:skip_build]
   exit $?.exitstatus unless $?.success?
 end
 
-run 'docker-compose run' \
-  " -u #{USER_ID_GROUP}" \
+run "USER_ID=#{USER_ID_GROUP}" \
+  ' docker-compose run' \
   ' --rm' \
   " specs #{ARGV.join}"
 exit $?.exitstatus unless $?.success?
