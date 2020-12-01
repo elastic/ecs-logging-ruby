@@ -21,6 +21,12 @@ runRspec(){
 
 bundle check || (rm Gemfile.lock && bundle)
 
+# For debugging purposes
+ls -ltra /vendor
+find /vendor -type f -ls
+whoami
+groups
+
 # If first arg is a spec path, run spec(s)
 if [[ $1 == spec/* ]]; then
   runRspec $@
