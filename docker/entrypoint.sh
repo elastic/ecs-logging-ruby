@@ -19,13 +19,14 @@ runRspec(){
     -r yarjuf -f JUnit -o "spec/junit-reports/${bn}ruby-agent-junit.xml" ${case}
 }
 
-bundle check || (rm Gemfile.lock && bundle)
-
 # For debugging purposes
-ls -ltra /vendor
-find /vendor -type f -ls
+ls -ltra ${GEM_HOME}
+find ${GEM_HOME} -type f -ls
 whoami
 groups
+
+
+bundle check || (rm Gemfile.lock && bundle)
 
 # If first arg is a spec path, run spec(s)
 if [[ $1 == spec/* ]]; then
