@@ -19,11 +19,6 @@ runRspec(){
     -r yarjuf -f JUnit -o "spec/junit-reports/${bn}ruby-agent-junit.xml" ${case}
 }
 
-# For debugging purposes
-ls -ltra /vendor || true
-find /vendor -type f -ls || true
-
-
 bundle check || (rm Gemfile.lock && bundle)
 
 # If first arg is a spec path, run spec(s)

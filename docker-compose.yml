@@ -15,7 +15,6 @@ services:
     tty: true
     volumes:
       - .:/app:cached
-      - ./vendor:/vendor
     tmpfs:
       - /tmp:exec,mode=1777
     user: ${USER_ID_GROUP}
