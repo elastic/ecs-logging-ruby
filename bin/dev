@@ -33,7 +33,7 @@ IMAGE_NAME = "apm-agent-ruby:#{IMAGE_PATH_SAFE}"
 VENDOR_PATH = "/vendor/#{IMAGE_PATH_SAFE}"
 
 def run(cmd)
-  "IMAGE_NAME=#{IMAGE_NAME} #{cmd}".tap do |str|
+  "IMAGE_NAME=#{IMAGE_NAME} USER_ID_GROUP=#{USER_ID_GROUP} #{cmd}".tap do |str|
     puts str
     system str
   end
@@ -48,8 +48,7 @@ unless options[:skip_build]
   exit $?.exitstatus unless $?.success?
 end
 
-run "USER_ID=#{USER_ID_GROUP}" \
-  ' docker-compose run' \
+run 'docker-compose run' \
   ' --rm' \
   " specs #{ARGV.join}"
 exit $?.exitstatus unless $?.success?
