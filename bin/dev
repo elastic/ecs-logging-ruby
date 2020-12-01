@@ -52,4 +52,5 @@ run 'docker-compose run' \
   " -u #{USER_ID_GROUP}" \
   ' --rm' \
   " specs #{ARGV.join}"
+exit $?.exitstatus unless $?.success?
 
