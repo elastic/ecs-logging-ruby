@@ -24,10 +24,8 @@ ENV PATH=/app/bin:$BUNDLE_BIN:$PATH
 ENV FRAMEWORKS $FRAMEWORKS
 ENV RUBY_IMAGE $RUBY_IMAGE
 
-RUN mkdir -p $GEM_HOME \
-      && chown -R $USER_ID_GROUP $GEM_HOME
-
 USER $USER_ID_GROUP
+RUN mkdir -p $GEM_HOME
 
 # Upgrade RubyGems and install required Bundler version
 RUN gem update --system && \
