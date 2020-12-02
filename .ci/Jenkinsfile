@@ -1,0 +1,84 @@
+#!/usr/bin/env groovy
+@Library('apm@current') _
+
+pipeline {
+  agent { label 'linux && immutable' }
+  environment {
+    REPO = 'ecs-logging-ruby'
+    BASE_DIR = "src/github.com/elastic/${env.REPO}"
+    DOCKER_REGISTRY = 'docker.elastic.co'
+    DOCKER_SECRET = 'secret/apm-team/ci/docker-registry/prod'
+    PIPELINE_LOG_LEVEL = 'INFO'
+    NOTIFY_TO = credentials('notify-to')
+    JOB_GCS_BUCKET = credentials('gcs-bucket')
+    VERSION = '2.7.2'
+    HOME = "${WORKSPACE}"
+    PATH = "${WORKSPACE}/.rbenv/bin:${WORKSPACE}/.rbenv/versions/${VERSION}/bin:${PATH}"
+  }
+  options {
+    timeout(time: 2, unit: 'HOURS')
+    buildDiscarder(logRotator(numToKeepStr: '20', artifactNumToKeepStr: '20', daysToKeepStr: '30'))
+    timestamps()
+    ansiColor('xterm')
+    disableResume()
+    durabilityHint('PERFORMANCE_OPTIMIZED')
+    rateLimitBuilds(throttle: [count: 60, durationName: 'hour', userBoost: true])
+    quietPeriod(10)
+  }
+  triggers {
+    issueCommentTrigger('(?i).*(?:jenkins\\W+)?run\\W+(?:the\\W+)?tests(?:\\W+please)?.*')
+  }
+  stages {
+    stage('Checkout') {
+      options { skipDefaultCheckout() }
+      steps {
+        pipelineManager([ cancelPreviousRunningBuilds: [ when: 'PR' ] ])
+        deleteDir()
+        gitCheckout(basedir: "${BASE_DIR}", githubNotifyFirstTimeContributor: true)
+        stash allowEmpty: true, name: 'source', useDefaultExcludes: false
+      }
+    }
+    stage('Tests') {
+      failFast false
+      matrix {
+        agent { label 'linux && docker && ubuntu-18.04 && immutable' }
+        options { skipDefaultCheckout() }
+        axes {
+          axis {
+            name 'RUBY_VERSION'
+            values 'ruby:2.7', 'ruby:2.6', 'ruby:2.5', 'ruby:2.4', 'ruby:2.3', 'jruby:9.2', 'jruby:9.1'
+          }
+          axis {
+            name 'FRAMEWORK'
+            values 'rails-6.0', 'rails-5.2', 'rails-5.1', 'sinatra-2.0'
+          }
+        }
+        stages {
+          stage('Tests') {
+            steps {
+              withGithubNotify(context: "Tests-${RUBY_VERSION}-${FRAMEWORK}") {
+                deleteDir()
+                unstash 'source'
+                dir("${BASE_DIR}"){
+                  dockerLogin(secret: "${DOCKER_SECRET}", registry: "${DOCKER_REGISTRY}")
+                  sh(label: 'install rbenv', script: '.ci/install-rbenv.sh "${VERSION}"')
+                  sh("bin/dev -i${RUBY_VERSION} -f${FRAMEWORK}")
+                }
+              }
+            }
+            post {
+              always {
+                junit(allowEmptyResults: true, keepLongStdio: true, testResults: "${BASE_DIR}/spec/junit-reports/**/*-junit.xml")
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  post {
+    cleanup {
+      notifyBuildResult()
+    }
+  }
+}

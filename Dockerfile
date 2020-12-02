@@ -22,10 +22,11 @@ ENV BUNDLE_APP_CONFIG=$BUNDLE_PATH \
 ENV PATH=/app/bin:$BUNDLE_BIN:$PATH
 
 ENV FRAMEWORKS $FRAMEWORKS
+ENV RUBY_IMAGE $RUBY_IMAGE
 
-RUN mkdir -p $VENDOR_PATH \
-      && chown -R $USER_ID_GROUP $VENDOR_PATH
-
+# Copy cached folder to speed up docker containers
+COPY vendor /vendor
+RUN chown -R $USER_ID_GROUP /vendor
 USER $USER_ID_GROUP
 
 # Upgrade RubyGems and install required Bundler version

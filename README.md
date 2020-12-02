@@ -1,3 +1,4 @@
+[![Jenkins](https://apm-ci.elastic.co/buildStatus/icon?job=apm-agent-ruby/ecs-logging-ruby-mbp/master)](https://apm-ci.elastic.co/job/apm-agent-ruby/job/ecs-logging-ruby-mbp/job/master/) 
 # ecs-logging-ruby
 
 This set of libraries allows you to transform your application logs to structured logs that comply with the [Elastic Common Schema (ECS)](https://www.elastic.co/guide/en/ecs/current/ecs-reference.html).
