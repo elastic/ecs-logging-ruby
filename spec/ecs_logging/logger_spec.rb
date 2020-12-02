@@ -91,7 +91,7 @@ module EcsLogging
           "log.origin" => {
             "file.line" => 82,
             "file.name" => "logger_spec.rb",
-            "function" => "block (3 levels) in <module:EcsLogging>"
+            "function" => /block.+in.+EcsLogging/
           }
         )
       end
