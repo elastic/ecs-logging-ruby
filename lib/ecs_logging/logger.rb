@@ -19,6 +19,7 @@
 
 require "logger"
 require "ecs_logging/formatter"
+require 'pp'
 
 module EcsLogging
   class Logger < ::Logger
@@ -58,7 +59,7 @@ module EcsLogging
     %w[unknown fatal error warn info debug].each do |severity|
       define_method(severity) do |progname, include_origin: false, **extras, &block|
         if include_origin && origin = origin_from_caller(caller)
-          extras["log.origin"] = origin
+          extras[:"log.origin"] = origin
         end
 
         name = severity.upcase.to_sym
