@@ -64,7 +64,7 @@ module EcsLogging
 
         name = severity.upcase.to_sym
         cnst = self.class.const_get(name)
-        add(cnst, nil, progname.to_sym, **extras, &block)
+        add(cnst, nil, progname, **extras, &block)
       end
     end
 

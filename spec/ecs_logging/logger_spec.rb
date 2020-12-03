@@ -66,10 +66,8 @@ module EcsLogging
     end
 
     describe "with progname" do
-      subject { described_class.new(io, progname: "yes") }
-
       it "includes it" do
-        subject.info("ok")
+        subject.info("yes") { "ok" }
 
         json = JSON.parse(log)
 
@@ -89,9 +87,9 @@ module EcsLogging
           "message" => "very informative",
           "ecs.version" => "1.4.0",
           "log.origin" => {
-            "file.line" => 82,
+            "file.line" => Integer,
             "file.name" => "logger_spec.rb",
-            "function" => /block.+in.+EcsLogging/
+            "function" => /block.*in.*EcsLogging/
           }
         )
       end
