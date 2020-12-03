@@ -33,7 +33,7 @@ Or install it yourself as:
 require 'ecs/logger'
 
 logger = Ecs::Logger.new($stdout)
-logger.info 'my informative message'
+logger.info('my informative message')
 logger.warn { 'be aware that…' }
 logger.error('a_progname') { 'oh no!' }
 ```
@@ -49,7 +49,7 @@ Logs the following JSON to `$stdout`:
 Additionally, it allows for adding additional keys to messages, eg:
 
 ```ruby
-logger.info 'ok', labels: { my_label: 'value' }, 'trace.id': 'abc-xyz'
+logger.info('ok', labels: { my_label: 'value' }, 'trace.id': 'abc-xyz')
 ```
 
 Logs:
@@ -62,6 +62,28 @@ Logs:
   "ecs.version":"1.4.0",
   "labels":{"my_label":"value"},
   "trace.id":"abc-xyz"
+}
+```
+
+To include info about where the log was called, call the methods with `include_origin: true`, like:
+
+```ruby
+logger.warn('Hello!', include_origin: true)
+```
+
+Resulting in
+
+```json
+{
+  "@timestamp":"2020-11-24T13:32:21.331Z",
+  "log.level":"WARN",
+  "message":"Hello!",
+  "ecs.version":"1.4.0",
+  "log.origin": {
+    "file.line": 123,
+    "file.name": "my_file.rb",
+    "function": "call"
+  }
 }
 ```
 
