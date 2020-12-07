@@ -40,6 +40,12 @@ module EcsLogging
       )
     end
 
+    it "ensures log key order" do
+      subject.info("my message", other: 1, keys: 2)
+      json = JSON.parse(log)
+      expect(json.keys.first(4)).to eq %w[@timestamp log.level message ecs.version]
+    end
+
     it "has methods for all severities" do
       subject.unknown('ok', process: { id: 1 })
       subject.fatal('ok', process: { id: 1 })

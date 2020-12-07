@@ -43,11 +43,8 @@ module EcsLogging
       severity = status >= 500 ? Logger::ERROR : Logger::INFO
 
       extras = {
-        http: {
-          request: {
-            method: req_method
-          }
-        },
+        client: { address: env["REMOTE_ADDR"] },
+        http: { request: { method: req_method } },
         url: {
           domain: env['HTTP_HOST'],
           path: path,
@@ -55,6 +52,14 @@ module EcsLogging
           scheme: env['HTTPS'] == 'on' ? 'https' : 'http'
         }
       }
+
+      if content_length = env["CONTENT_LENGTH"]
+        extras[:http][:request][:'body.bytes'] = content_length
+      end
+
+      if user_agent = env['HTTP_USER_AGENT']
+        extras[:user_agent] = { original: user_agent }
+      end
 
       @logger.add(severity, message, **extras)
     end

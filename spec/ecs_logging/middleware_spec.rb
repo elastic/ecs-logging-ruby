@@ -50,7 +50,6 @@ module EcsLogging
       resp = get '/'
 
       expect(resp.body).to eq 'ok'
-
       expect(log.lines.count).to be 1
 
       json = JSON.parse(log.lines.last)
@@ -60,9 +59,11 @@ module EcsLogging
         'log.level' => "INFO",
         'message' => "GET /",
         'ecs.version' => '1.4.0',
+        'client' => { 'address' => '127.0.0.1' },
         'http' => {
           'request' => {
-            'method' => 'GET'
+            'method' => 'GET',
+            'body.bytes' => '0'
           }
         },
         'url' => {
@@ -72,6 +73,13 @@ module EcsLogging
           'scheme' => 'http'
         }
       )
+    end
+
+    it 'ensures key order' do
+      resp = get '/'
+      json = JSON.parse(log.lines.last)
+
+      expect(json.keys.first(4)).to eq %w[@timestamp log.level message ecs.version]
     end
   end
 end

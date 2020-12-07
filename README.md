@@ -97,13 +97,17 @@ Example output:
 
 ```json
 {
-  "@timestamp":"2020-11-24T20:00:22.707Z",
+  "@timestamp":"2020-12-07T13:44:04.568Z",
   "log.level":"INFO",
   "message":"GET /",
   "ecs.version":"1.4.0",
+  "client":{
+    "address":"127.0.0.1"
+  },
   "http":{
     "request":{
-      "method":"GET"
+      "method":"GET",
+      "body.bytes":"0"
     }
   },
   "url":{
