@@ -42,6 +42,7 @@ endif::[]
 ===== Added
 
 - Use `include_origin` to attach stack traces to logs {pull}1[#1]
+- More fields logged when using Rack middleware {pull}6[#6]
 
 [[release-notes-0.1.0]]
 ==== 0.1.0 (2020-11-25)
