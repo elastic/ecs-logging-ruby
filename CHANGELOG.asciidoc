@@ -35,9 +35,8 @@ endif::[]
 [[release-notes-0.x]]
 === ECS logging Ruby 0.x
 
-[float]
-[[unreleased]]
-==== Unreleased
+[[release-notes-0.2.0]]
+==== 0.2.0 (2020-12-09)
 
 ===== Added
 
