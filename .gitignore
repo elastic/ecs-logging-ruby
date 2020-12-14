@@ -16,3 +16,6 @@ Gemfile.lock
 
 # junit reports folder
 spec/junit-reports
+
+# Doc build files
+html_docs
