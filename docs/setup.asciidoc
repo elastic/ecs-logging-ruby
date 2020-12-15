@@ -1,8 +1,6 @@
 [[setup]]
 == Get started
 
-include::./tab-widgets/code.asciidoc[]
-
 [float]
 [[setup-step-1]]
 === Step 1: Set up application logging
