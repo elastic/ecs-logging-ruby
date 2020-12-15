@@ -1,0 +1,147 @@
+[[setup]]
+== Get started
+
+include::./tab-widgets/code.asciidoc[]
+
+[float]
+[[setup-step-1]]
+=== Step 1: Set up application logging
+
+[float]
+==== Add the dependency
+
+Add this line to your application's Gemfile:
+
+[source,ruby]
+----
+gem 'ecs-logging'
+----
+
+Execute with:
+
+[source,cmd]
+----
+bundle install
+----
+
+Alternatively, you can install the package yourself with:
+
+[source,cmd]
+----
+gem install ecs-logging
+----
+
+[float]
+==== Configure
+
+`Ecs::Logger` is a subclass of Ruby's own https://ruby-doc.org/stdlib/libdoc/logger/rdoc/Logger.html[`Logger`]
+and responds to the same methods.
+
+For example:
+
+[source,ruby]
+----
+require 'ecs/logger'
+
+logger = Ecs::Logger.new($stdout)
+logger.info('my informative message')
+logger.warn { 'be aware that…' }
+logger.error('a_progname') { 'oh no!' }
+----
+
+Logs the following JSON to `$stdout`:
+
+[source,json]
+----
+{"@timestamp":"2020-11-24T13:32:21.329Z","log.level":"INFO","message":"very informative","ecs.version":"1.4.0"}
+ {"@timestamp":"2020-11-24T13:32:21.330Z","log.level":"WARN","message":"be aware that…","ecs.version":"1.4.0"}
+ {"@timestamp":"2020-11-24T13:32:21.331Z","log.level":"ERROR","message":"oh no!","ecs.version":"1.4.0","process.title":"a_progname"}
+----
+
+Additionally, it allows for adding additional keys to messages.
+
+For example:
+
+[source,ruby]
+----
+logger.info('ok', labels: { my_label: 'value' }, 'trace.id': 'abc-xyz')
+----
+
+Logs the following:
+
+[source,json]
+----
+{
+  "@timestamp":"2020-11-24T13:32:21.331Z",
+  "log.level":"ERROR",
+  "message":"oh no!",
+  "ecs.version":"1.4.0",
+  "labels":{"my_label":"value"},
+  "trace.id":"abc-xyz"
+}
+----
+
+To include info about where the log was called, call the methods with `include_origin: true`,
+like `logger.warn('Hello!', include_origin: true)`. This logs:
+
+[source,json]
+----
+{
+  "@timestamp":"2020-11-24T13:32:21.331Z",
+  "log.level":"WARN",
+  "message":"Hello!",
+  "ecs.version":"1.4.0",
+  "log.origin": {
+    "file.line": 123,
+    "file.name": "my_file.rb",
+    "function": "call"
+  }
+}
+----
+
+[float]
+==== Rack configuration
+
+[source,ruby]
+----
+use EcsLogging::Middleware, $stdout
+----
+
+Example output:
+
+[source,json]
+----
+{
+  "@timestamp":"2020-12-07T13:44:04.568Z",
+  "log.level":"INFO",
+  "message":"GET /",
+  "ecs.version":"1.4.0",
+  "client":{
+    "address":"127.0.0.1"
+  },
+  "http":{
+    "request":{
+      "method":"GET",
+      "body.bytes":"0"
+    }
+  },
+  "url":{
+    "domain":"example.org",
+    "path":"/",
+    "port":"80",
+    "scheme":"http"
+  }
+}
+----
+
+[float]
+[[setup-step-2]]
+=== Step 2: Enable APM log correlation (optional)
+If you are using the Elastic APM Ruby agent,
+{apm-ruby-ref}/log-correlation.html[enable log correlation].
+
+[float]
+[[setup-step-3]]
+=== Step 3: Configure Filebeat
+
+include::{ecs-repo-dir}/setup.asciidoc[tag=configure-filebeat]
