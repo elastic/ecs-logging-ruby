@@ -39,9 +39,9 @@ For example:
 
 [source,ruby]
 ----
-require 'ecs/logger'
+require 'ecs_logging/logger'
 
-logger = Ecs::Logger.new($stdout)
+logger = EcsLogging::Logger.new($stdout)
 logger.info('my informative message')
 logger.warn { 'be aware that…' }
 logger.error('a_progname') { 'oh no!' }
