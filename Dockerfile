@@ -34,7 +34,7 @@ RUN gem update --system && \
       gem install bundler:$BUNDLER_VERSION
 
 # Use unpatched, system version for more speed over less security
-RUN gem install nokogiri -- --use-system-libraries
+RUN gem install nokogiri -v 1.10.10 -- --use-system-libraries
 
 WORKDIR /app
 
