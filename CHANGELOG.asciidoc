@@ -35,6 +35,14 @@ endif::[]
 [[release-notes-0.x]]
 === ECS logging Ruby 0.x
 
+[float]
+[[unreleased]]
+==== Unreleased
+
+===== Fixed
+
+- Calling severity methods without a progname {pull}13[#13]
+
 [[release-notes-0.2.0]]
 ==== 0.2.0 (2020-12-09)
 
