@@ -57,7 +57,7 @@ module EcsLogging
     end
 
     %w[unknown fatal error warn info debug].each do |severity|
-      define_method(severity) do |progname, include_origin: false, **extras, &block|
+      define_method(severity) do |progname = nil, include_origin: false, **extras, &block|
         if include_origin && origin = origin_from_caller(caller)
           extras[:"log.origin"] = origin
         end
