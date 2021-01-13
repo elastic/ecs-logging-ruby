@@ -46,11 +46,11 @@ pipeline {
         axes {
           axis {
             name 'RUBY_VERSION'
-            values 'ruby:2.7', 'ruby:2.6', 'ruby:2.5', 'ruby:2.4', 'ruby:2.3', 'jruby:9.2', 'jruby:9.1'
+            values 'ruby:2.7', 'ruby:2.6', 'ruby:2.5', 'ruby:2.4', 'ruby:2.3', 'jruby:9.2'
           }
           axis {
             name 'FRAMEWORK'
-            values 'rails-6.0', 'rails-5.2', 'rails-5.1', 'sinatra-2.0'
+            values 'rails-6.1', 'rails-6.0', 'rails-5.2', 'sinatra-2.0'
           }
         }
         stages {
