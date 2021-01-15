@@ -100,5 +100,46 @@ module EcsLogging
         )
       end
     end
+
+    context "when running alongside the Elastic APM agent" do
+      before do
+        module ::ElasticAPM
+          def self.running?
+            true
+          end
+
+          def self.current_transaction
+            Struct.new(:id, :trace_id).new('abc', 'xyz')
+          end
+
+          def self.current_span
+            Struct.new(:id).new('def')
+          end
+        end
+      end
+
+      after do
+        Object.send(:remove_const, :ElasticAPM)
+        raise if defined?(ElasticAPM)
+      end
+
+      it "add transaction and trace ids" do
+        subject.info("very informative")
+
+        json = JSON.parse(log)
+
+        expect(json).to(
+          match(
+            "@timestamp" => /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
+            "log.level" => "INFO",
+            "message" => "very informative",
+            "ecs.version" => "1.4.0",
+            "transaction.id" => "abc",
+            "trace.id" => "xyz",
+            "span.id" => "def"
+          )
+        )
+      end
+    end
   end
 end
