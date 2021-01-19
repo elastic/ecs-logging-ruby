@@ -43,6 +43,12 @@ module EcsLogging
         end
       end
 
+      if apm_agent_present_and_running?
+        extras[:"transaction.id"] = ElasticAPM.current_transaction&.id
+        extras[:"trace.id"] = ElasticAPM.current_transaction&.trace_id
+        extras[:"span.id"] = ElasticAPM.current_span&.id
+      end
+
       @logdev.write(
         format_message(
           format_severity(severity),
@@ -86,6 +92,12 @@ module EcsLogging
 
     def format_message(severity, datetime, progname, msg, **extras)
       formatter.call(severity, datetime, progname, msg, **extras)
+    end
+
+    def apm_agent_present_and_running?
+      return false unless defined?(::ElasticAPM)
+
+      ElasticAPM.running?
     end
   end
 end
