@@ -18,12 +18,19 @@
 # frozen_string_literal: true
 
 require "spec_helper"
+
 require "ecs_logging/logger"
+require "spec/spec_validator"
 
 module EcsLogging
   RSpec.describe Logger do
     let(:io) { StringIO.new }
     let(:log) { io.rewind; io.read }
+
+    before(:all) do
+      @validator =
+        SpecValidator.new(JSON.parse(File.read('spec/fixtures/spec/spec.json')))
+    end
 
     subject { described_class.new(io) }
 
@@ -38,12 +45,8 @@ module EcsLogging
         "message" => "very informative",
         "ecs.version" => "1.4.0",
       )
-    end
 
-    it "ensures log key order" do
-      subject.info("my message", other: 1, keys: 2)
-      json = JSON.parse(log)
-      expect(json.keys.first(4)).to eq %w[@timestamp log.level message ecs.version]
+      expect(@validator.validate!(json)).to be true
     end
 
     it "has methods for all severities" do
@@ -69,6 +72,8 @@ module EcsLogging
         "ecs.version" => "1.4.0",
         "process" => { "id" => 1 }
       )
+
+      expect(@validator.validate!(json)).to be true
     end
 
     describe "with progname" do
@@ -78,6 +83,8 @@ module EcsLogging
         json = JSON.parse(log)
 
         expect(json["log.logger"]).to eq "yes"
+
+        expect(@validator.validate!(json)).to be true
       end
     end
 
@@ -98,6 +105,8 @@ module EcsLogging
             "function" => /block.*in.*EcsLogging/
           }
         )
+
+        expect(@validator.validate!(json)).to be true
       end
     end
 
@@ -139,6 +148,8 @@ module EcsLogging
             "span.id" => "def"
           )
         )
+
+        expect(@validator.validate!(json)).to be true
       end
     end
   end
