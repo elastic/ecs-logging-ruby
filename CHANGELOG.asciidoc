@@ -32,16 +32,18 @@ endif::[]
 ==== Unreleased
 ////
 
-[[release-notes-0.x]]
-=== ECS logging Ruby 0.x
+[[release-notes-1.x]]
+=== ECS logging Ruby 1.x
 
-[float]
-[[unreleased]]
-==== Unreleased
+[[release-notes-1.0.0]]
+==== 1.0.0 (2021-02-09)
 
 ===== Added
 
 - Add tracing IDs from Elastic APM if running alongside {pull}14[#14]
+
+[[release-notes-0.x]]
+=== ECS logging Ruby 0.x
 
 [[release-notes-0.2.1]]
 ==== 0.2.1 (2021-01-13)
