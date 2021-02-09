@@ -8,8 +8,6 @@ See [ecs-logging](https://github.com/elastic/ecs-logging) for other ECS logging 
 
 ---
 
-**Please note** that this library is in a <strong>pre-1.0</strong> version and backwards-incompatible changes might be introduced in future releases. While we strive to comply to [semver](https://semver.org/), we can not guarantee to avoid breaking changes in minor releases.
-
 ## Documentation
 
 Ready to get started? Documentation is at [elastic.co](https://www.elastic.co/guide/en/ecs-logging/ruby/current/index.html).
