@@ -1,0 +1,57 @@
+---
+## Test with multiple ruby images and frameworks
+name: test
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*.*.*
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-image:
+          - 'ruby:2.7'
+          - 'ruby:2.6'
+          - 'ruby:2.5'
+          - 'ruby:2.4'
+          - 'ruby:2.3'
+          - 'jruby:9.2'
+        framework:
+          - 'rails-6.1'
+          - 'rails-6.0'
+          - 'rails-5.2'
+          - 'sinatra-2.0'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7.2'
+      - uses: elastic/apm-pipeline-library/.github/actions/docker-login@current
+        if: github.event.pull_request.head.repo.full_name == github.repository # Only docker-login if the PR is not from a fork.
+        with:
+          registry: index.docker.io/v1/
+          secret: secret/observability-team/ci/docker-registry/prod
+          url: ${{ secrets.VAULT_ADDR }}
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID }}
+      - name: Test ${{ matrix.ruby-image }}, ${{ matrix.framework }}
+        env:
+          RUBY_VERSION: ${{ matrix.ruby-image }}
+        run: bin/dev --image=${{ matrix.ruby-image }} --frameworks=${{ matrix.framework }}
+      - uses: actions/upload-artifact@v3
+        if: success() || failure()
+        with:
+          name: test-results
+          path: 'spec/junit-reports/**/*-junit.xml'
