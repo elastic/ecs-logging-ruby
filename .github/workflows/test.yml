@@ -39,7 +39,7 @@ jobs:
         with:
           ruby-version: '2.7.2'
       - uses: elastic/apm-pipeline-library/.github/actions/docker-login@current
-        if: github.event.pull_request.head.repo.full_name == github.repository # Only docker-login if the PR is not from a fork.
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository # Only docker-login if the PR is not from a fork.
         with:
           registry: index.docker.io/v1/
           secret: secret/observability-team/ci/docker-registry/prod
