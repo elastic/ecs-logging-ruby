@@ -45,7 +45,7 @@ jobs:
           key: docker-cache-${{ matrix.ruby-image }}-${{ matrix.framework }}-{hash}
           restore-keys: |
             docker-cache-${{ matrix.ruby-image }}-${{ matrix.framework }}-
-      - name: Test ${{ matrix.ruby-image }}, ${{ matrix.framework }}-${{ hashFiles('Gemfile', 'Rakefile') }}-
+      - name: Test ${{ matrix.ruby-image }}, ${{ matrix.framework }}
         env:
           RUBY_VERSION: ${{ matrix.ruby-image }}
         run: bin/dev --image=${{ matrix.ruby-image }} --frameworks=${{ matrix.framework }}
