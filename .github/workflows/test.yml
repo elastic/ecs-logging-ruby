@@ -41,9 +41,9 @@ jobs:
       - uses: reakaleek/apm-pipeline-library/.github/actions/docker-layer-caching@feature/docker-layer-caching-action-facade
         with:
           # {hash} must be included according to docs. https://github.com/marketplace/actions/docker-layer-caching
-          key: docker-cache-${{ matrix.ruby-image }}-${{ matrix.framework }}-{hash}
+          key: docker-cache-${{ matrix.ruby-image }}-${{ matrix.framework }}-${{ github.workflow }}-{hash}
           restore-keys: |
-            docker-cache-${{ matrix.ruby-image }}-${{ matrix.framework }}-
+            docker-cache-${{ matrix.ruby-image }}-${{ matrix.framework }}-${{ github.workflow }}-
       - name: Test ${{ matrix.ruby-image }}, ${{ matrix.framework }}
         env:
           RUBY_VERSION: ${{ matrix.ruby-image }}
