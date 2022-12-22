@@ -38,8 +38,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.7.2'
-      - uses: satackey/action-docker-layer-caching@46d2c640b1d8ef50d185452ad6fb324e6bd1d052
-        continue-on-error: true
+      - uses: reakaleek/apm-pipeline-library/.github/actions/docker-layer-caching@feature/docker-layer-caching-action-facade
         with:
           # {hash} must be included according to docs. https://github.com/marketplace/actions/docker-layer-caching
           key: docker-cache-${{ matrix.ruby-image }}-${{ matrix.framework }}-{hash}
