@@ -48,7 +48,11 @@ jobs:
           secretId: ${{ secrets.VAULT_SECRET_ID }}
       - uses: satackey/action-docker-layer-caching@46d2c640b1d8ef50d185452ad6fb324e6bd1d052
         continue-on-error: true
-      - name: Test ${{ matrix.ruby-image }}, ${{ matrix.framework }}
+        with:
+          key: docker-cache-${{ matrix.ruby-image }}-${{ matrix.framework }}-${{ hashFiles('Gemfile', 'Rakefile') }}-{hash}
+          restore-keys: |
+            docker-cache-${{ matrix.ruby-image }}-${{ matrix.framework }}-
+      - name: Test ${{ matrix.ruby-image }}, ${{ matrix.framework }}-${{ hashFiles('Gemfile', 'Rakefile') }}
         env:
           RUBY_VERSION: ${{ matrix.ruby-image }}
         run: bin/dev --image=${{ matrix.ruby-image }} --frameworks=${{ matrix.framework }}
