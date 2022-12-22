@@ -49,10 +49,11 @@ jobs:
       - uses: satackey/action-docker-layer-caching@46d2c640b1d8ef50d185452ad6fb324e6bd1d052
         continue-on-error: true
         with:
-          key: docker-cache-${{ matrix.ruby-image }}-${{ matrix.framework }}-${{ hashFiles('Gemfile', 'Rakefile') }}-{hash}
+          # {hash} must be included according to docs. https://github.com/marketplace/actions/docker-layer-caching
+          key: docker-cache-${{ matrix.ruby-image }}-${{ matrix.framework }}-{hash}
           restore-keys: |
             docker-cache-${{ matrix.ruby-image }}-${{ matrix.framework }}-
-      - name: Test ${{ matrix.ruby-image }}, ${{ matrix.framework }}-${{ hashFiles('Gemfile', 'Rakefile') }}
+      - name: Test ${{ matrix.ruby-image }}, ${{ matrix.framework }}-${{ hashFiles('Gemfile', 'Rakefile') }}-
         env:
           RUBY_VERSION: ${{ matrix.ruby-image }}
         run: bin/dev --image=${{ matrix.ruby-image }} --frameworks=${{ matrix.framework }}
