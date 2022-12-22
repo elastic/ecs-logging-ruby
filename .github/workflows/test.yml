@@ -46,6 +46,8 @@ jobs:
           url: ${{ secrets.VAULT_ADDR }}
           roleId: ${{ secrets.VAULT_ROLE_ID }}
           secretId: ${{ secrets.VAULT_SECRET_ID }}
+      - uses: satackey/action-docker-layer-caching@46d2c640b1d8ef50d185452ad6fb324e6bd1d052
+        continue-on-error: true
       - name: Test ${{ matrix.ruby-image }}, ${{ matrix.framework }}
         env:
           RUBY_VERSION: ${{ matrix.ruby-image }}
