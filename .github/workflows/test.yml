@@ -42,9 +42,9 @@ jobs:
         with:
           # {hash} must be included according to docs. https://github.com/marketplace/actions/docker-layer-caching
           # The key must be unique to every distinct matrix job
-          key: docker-cache-${{ matrix.ruby-image }}-${{ matrix.framework }}-${{ github.workflow }}-{hash}
+          key: v1-docker-cache-${{ matrix.ruby-image }}-${{ matrix.framework }}-${{ github.workflow }}-{hash}
           restore-keys: |
-            docker-cache-${{ matrix.ruby-image }}-${{ matrix.framework }}-${{ github.workflow }}-
+            v1-docker-cache-${{ matrix.ruby-image }}-${{ matrix.framework }}-${{ github.workflow }}-
       - name: Test ${{ matrix.ruby-image }}, ${{ matrix.framework }}
         env:
           RUBY_VERSION: ${{ matrix.ruby-image }}
