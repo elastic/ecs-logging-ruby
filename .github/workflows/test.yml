@@ -38,8 +38,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.7.2'
-        # TODO: Change to elastic/...@current when https://github.com/elastic/apm-pipeline-library/pull/1979 is released
-      - uses: reakaleek/apm-pipeline-library/.github/actions/docker-layer-caching@feature/docker-layer-caching-action-facade
+      - uses: elastic/apm-pipeline-library/.github/actions/docker-layer-caching@current
         with:
           # {hash} must be included according to docs. https://github.com/marketplace/actions/docker-layer-caching
           # The key must be unique to every distinct matrix job
