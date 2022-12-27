@@ -30,6 +30,7 @@ RUN chown -R $USER_ID_GROUP /vendor
 USER $USER_ID_GROUP
 
 # Upgrade RubyGems and install required Bundler version
+# https://github.com/rubygems/rubygems/issues/2534#issuecomment-448843746
 RUN gem update --system --conservative || (gem i "rubygems-update:~>2.7" --no-document && update_rubygems) && \
       gem install bundler:$BUNDLER_VERSION --conservative
 
