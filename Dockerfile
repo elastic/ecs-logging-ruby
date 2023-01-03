@@ -30,8 +30,9 @@ RUN chown -R $USER_ID_GROUP /vendor
 USER $USER_ID_GROUP
 
 # Upgrade RubyGems and install required Bundler version
-RUN gem update --system && \
-      gem install bundler:$BUNDLER_VERSION
+# https://github.com/rubygems/rubygems/issues/2534#issuecomment-448843746
+RUN gem update --system --conservative || (gem i "rubygems-update:~>2.7" --no-document && update_rubygems) && \
+      gem install bundler:$BUNDLER_VERSION --conservative
 
 # Use unpatched, system version for more speed over less security
 RUN gem install nokogiri -v 1.10.10 -- --use-system-libraries
