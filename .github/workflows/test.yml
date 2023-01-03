@@ -21,11 +21,12 @@ jobs:
       fail-fast: false
       matrix:
         ruby-image:
+          - 'ruby:3.2'
+          - 'ruby:3.1'
           - 'ruby:2.7'
           - 'ruby:2.6'
           - 'ruby:2.5'
           - 'ruby:2.4'
-          - 'ruby:2.3'
           - 'jruby:9.2'
         framework:
           - 'rails-6.1'
