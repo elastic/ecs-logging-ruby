@@ -50,8 +50,15 @@ jobs:
         env:
           RUBY_VERSION: ${{ matrix.ruby-image }}
         run: bin/dev --image=${{ matrix.ruby-image }} --frameworks=${{ matrix.framework }}
+      - name: prepare artifact name # because it cannot have colons ":"
+        id: artifact_name
+        run: |
+          echo "artifact_name="test-results-${RUBY_IMAGE//:/_}-${FRAMEWORK}" >> "${GITHUB_OUTPUT}"
+        env:
+          RUBY_IMAGE: ${{ matrix.ruby-image }}
+          FRAMEWORK: ${{ matrix.framework }}
       - uses: actions/upload-artifact@v4
         if: success() || failure()
         with:
-          name: test-results-${{ matrix.ruby-image }}-${{ matrix.framework }}
+          name: ${{ steps.artifact_name.outputs.artifact_name }}
           path: 'spec/junit-reports/**/*-junit.xml'
