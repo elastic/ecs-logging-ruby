@@ -53,7 +53,7 @@ jobs:
       - name: prepare artifact name # because it cannot have colons ":"
         id: artifact_name
         run: |
-          echo "artifact_name="test-results-${RUBY_IMAGE//:/_}-${FRAMEWORK}" >> "${GITHUB_OUTPUT}"
+          echo "artifact_name=test-results-${RUBY_IMAGE//:/_}-${FRAMEWORK}" >> "${GITHUB_OUTPUT}"
         env:
           RUBY_IMAGE: ${{ matrix.ruby-image }}
           FRAMEWORK: ${{ matrix.framework }}
