@@ -50,8 +50,8 @@ jobs:
         env:
           RUBY_VERSION: ${{ matrix.ruby-image }}
         run: bin/dev --image=${{ matrix.ruby-image }} --frameworks=${{ matrix.framework }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: success() || failure()
         with:
-          name: test-results
+          name: test-results-${{ matrix.ruby-image }}-${{ matrix.framework }}
           path: 'spec/junit-reports/**/*-junit.xml'
