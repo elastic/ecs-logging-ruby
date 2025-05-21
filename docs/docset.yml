@@ -1,4 +1,6 @@
 project: 'ECS Logging Ruby'
+products:
+  - id: ecs-logging
 cross_links:
   - apm-agent-ruby
   - beats
