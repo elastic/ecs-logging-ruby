@@ -1,7 +1,12 @@
 ---
+applies_to:
+  stack: ga
+  serverless: ga
 mapped_pages:
   - https://www.elastic.co/guide/en/ecs-logging/ruby/current/setup.html
 navigation_title: Get started
+products:
+  - id: ecs-logging
 ---
 
 # Get started with ECS Logging Ruby [setup]
@@ -131,6 +136,11 @@ If you are using the Elastic APM Ruby agent, [enable log correlation](apm-agent-
 
 
 ## Step 3: Configure Filebeat [setup-step-3]
+
+```{applies_to}
+stack: ga
+serverless: unavailable
+```
 
 :::::::{tab-set}
 
