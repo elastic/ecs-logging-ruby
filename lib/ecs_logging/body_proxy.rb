@@ -25,6 +25,14 @@ module EcsLogging
       @closed = false
     end
 
+    def each(&block)
+      @body.each(&block)
+    end
+
+    def to_path
+      @body.to_path if @body.respond_to?(:to_path)
+    end
+
     def respond_to_missing?(name, include_all = false)
       super || @body.respond_to?(name, include_all)
     end

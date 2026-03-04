@@ -37,6 +37,7 @@ module EcsLogging
         use EcsLogging::Middleware, TestIO
 
         disable :show_exceptions
+        set :host_authorization, permitted_hosts: [] if respond_to?(:host_authorization)
 
         get '/' do
           'ok'
@@ -58,12 +59,11 @@ module EcsLogging
         '@timestamp' => /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
         'log.level' => "INFO",
         'message' => "GET /",
-        'ecs.version' => '1.4.0',
+        'ecs.version' => '8.11.0',
         'client' => { 'address' => '127.0.0.1' },
         'http' => {
           'request' => {
-            'method' => 'GET',
-            'body.bytes' => '0'
+            'method' => 'GET'
           }
         },
         'url' => {
@@ -80,6 +80,34 @@ module EcsLogging
       json = JSON.parse(log.lines.last)
 
       expect(json.keys.first(4)).to eq %w[@timestamp log.level message ecs.version]
+    end
+
+    it 'logs metadata' do
+      get '/', {}, { 'HTTP_USER_AGENT' => 'Mozilla/5.0', 'CONTENT_LENGTH' => '123' }
+      json = JSON.parse(log.lines.last)
+
+      expect(json['user_agent']['original']).to eq 'Mozilla/5.0'
+      expect(json['http']['request']['body.bytes']).to eq '123'
+    end
+
+    it 'logs scheme' do
+      get '/', {}, { 'HTTPS' => 'on' }
+      json = JSON.parse(log.lines.last)
+
+      expect(json['url']['scheme']).to eq 'https'
+    end
+
+    it 'logs 500 as ERROR' do
+      class MyApp < Sinatra::Base
+        get '/error' do
+          [500, {}, 'error']
+        end
+      end
+
+      get '/error'
+      json = JSON.parse(log.lines.last)
+
+      expect(json['log.level']).to eq 'ERROR'
     end
   end
 end

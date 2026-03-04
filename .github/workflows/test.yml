@@ -21,24 +21,21 @@ jobs:
       fail-fast: false
       matrix:
         ruby-image:
+          - 'ruby:4.0'
+          - 'ruby:3.4'
+          - 'ruby:3.3'
           - 'ruby:3.2'
-          - 'ruby:3.1'
-          - 'ruby:2.7'
-          - 'ruby:2.6'
-          - 'ruby:2.5'
-          - 'ruby:2.4'
-          - 'jruby:9.2'
         framework:
-          - 'rails-6.1'
-          - 'rails-6.0'
-          - 'rails-5.2'
+          - 'rails-8.1'
+          - 'rails-8.0'
+          - 'rails-7.2'
           - 'sinatra-2.0'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.7.2'
+          ruby-version: '3.3'
       - uses: elastic/apm-pipeline-library/.github/actions/docker-layer-caching@current
         with:
           # {hash} must be included according to docs. https://github.com/marketplace/actions/docker-layer-caching

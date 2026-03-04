@@ -19,7 +19,6 @@
 
 require "logger"
 require "ecs_logging/formatter"
-require 'pp'
 
 module EcsLogging
   class Logger < ::Logger
@@ -44,9 +43,13 @@ module EcsLogging
       end
 
       if apm_agent_present_and_running?
-        extras[:"transaction.id"] = ElasticAPM.current_transaction&.id
-        extras[:"trace.id"] = ElasticAPM.current_transaction&.trace_id
-        extras[:"span.id"] = ElasticAPM.current_span&.id
+        if txn = ElasticAPM.current_transaction
+          extras[:"transaction.id"] = txn.id
+          extras[:"trace.id"] = txn.trace_id
+        end
+        if span = ElasticAPM.current_span
+          extras[:"span.id"] = span.id
+        end
       end
 
       @logdev.write(
@@ -55,7 +58,7 @@ module EcsLogging
           Time.now,
           progname,
           message,
-          **extras
+          extras
         )
       )
 
@@ -64,38 +67,35 @@ module EcsLogging
 
     %w[unknown fatal error warn info debug].each do |severity|
       define_method(severity) do |progname = nil, include_origin: false, **extras, &block|
-        if include_origin && origin = origin_from_caller(caller)
+        if include_origin && origin = origin_from_caller(caller_locations(1, 1))
           extras[:"log.origin"] = origin
         end
 
         name = severity.upcase.to_sym
         cnst = self.class.const_get(name)
-        add(cnst, nil, progname, **extras, &block)
+        add(cnst, nil, progname, include_origin: include_origin, **extras, &block)
       end
     end
 
     private
 
-    RUBY_FORMAT = /^(.+?):(\d+)(?::in `(.+?)')?$/.freeze
-
-    def origin_from_caller(stack)
-      return unless (ruby_match = stack.first.match(RUBY_FORMAT))
-
-      _, file, number, method = ruby_match.to_a
+    def origin_from_caller(locations)
+      return unless location = locations&.first
 
       {
-        'file.name': File.basename(file),
-        'file.line': number.to_i,
-        function: method
+        'file.name': File.basename(location.path),
+        'file.line': location.lineno,
+        function: location.label
       }
     end
 
-    def format_message(severity, datetime, progname, msg, **extras)
-      formatter.call(severity, datetime, progname, msg, **extras)
+    def format_message(severity, datetime, progname, msg, extras = nil)
+      formatter.call(severity, datetime, progname, msg, extras)
     end
 
     def apm_agent_present_and_running?
-      return false unless defined?(::ElasticAPM)
+      @apm_present ||= defined?(::ElasticAPM)
+      return false unless @apm_present
 
       ElasticAPM.running?
     end

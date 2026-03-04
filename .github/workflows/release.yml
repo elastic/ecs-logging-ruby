@@ -1,0 +1,60 @@
+name: release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+  packages: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: google-github-actions/release-please-action@v4
+        id: release
+        with:
+          release-type: ruby
+          package-name: ecs-logging
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundle-cache: true
+
+      - name: Build gem
+        run: gem build ecs-logging.gemspec
+
+      - name: Publish to RubyGems
+        run: |
+          mkdir -p ~/.gem
+          touch ~/.gem/credentials
+          chmod 0600 ~/.gem/credentials
+          printf "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > ~/.gem/credentials
+          gem push ecs-logging-*.gem
+        env:
+          GEM_HOST_API_KEY: "${{ secrets.RUBY_GEMS_API_KEY }}"
+
+      - name: Publish to GitHub Packages
+        run: |
+          export GITHUB_USER=${{ github.repository_owner }}
+          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          gem push ecs-logging-*.gem --host "https://rubygems.pkg.github.com/${GITHUB_USER}"
+
+      - name: Publish to gem.coop
+        run: |
+          gem push ecs-logging-*.gem --host "https://gem.coop"
+        env:
+          GEM_HOST_API_KEY: "${{ secrets.GEM_COOP_API_KEY }}"

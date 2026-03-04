@@ -38,13 +38,12 @@ module EcsLogging
     def log(env, status, headers)
       req_method = env['REQUEST_METHOD']
       path = env['PATH_INFO']
-      message = "#{req_method} #{path}"
-
-      severity = status >= 500 ? Logger::ERROR : Logger::INFO
-
+      
       extras = {
-        client: { address: env["REMOTE_ADDR"] },
-        http: { request: { method: req_method } },
+        client: { address: env['REMOTE_ADDR'] },
+        http: { 
+          request: { method: req_method } 
+        },
         url: {
           domain: env['HTTP_HOST'],
           path: path,
@@ -53,7 +52,7 @@ module EcsLogging
         }
       }
 
-      if content_length = env["CONTENT_LENGTH"]
+      if content_length = env['CONTENT_LENGTH']
         extras[:http][:request][:'body.bytes'] = content_length
       end
 
@@ -61,7 +60,11 @@ module EcsLogging
         extras[:user_agent] = { original: user_agent }
       end
 
-      @logger.add(severity, message, **extras)
+      @logger.add(
+        status >= 500 ? Logger::ERROR : Logger::INFO,
+        "#{req_method} #{path}",
+        **extras
+      )
     end
   end
 end
